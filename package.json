@@ -1,0 +1,33 @@
+{
+  "name": "face-ai-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:TriDiamond/face-ai-api.git",
+  "author": "TriDiamond <code.tridiamond@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "nodemon app.ts",
+    "build": "tsc --project ./"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "clarifai": "^2.9.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^16.4.1",
+    "nodemon": "^2.0.12",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}
