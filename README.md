@@ -69,6 +69,8 @@ yarn serve
 Last but not least, add a `.env` file in the root folder with the following content:
 
 ```shell
+ALLOWED_CORS=http://localhost:3000 # Domain to allow CORS
+
 DB_HOST=xxx.xxx.xxx.xx # Database host url
 DB_PORT=3306
 DB_USERNAME=face_ai

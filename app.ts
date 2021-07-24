@@ -12,10 +12,21 @@ import imageRouters from './routers/image';
 const app = express();
 const port = process.env.PORT || 3030;
 
+const whitelist = [process.env.ALLOWED_CORS];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
 // Middlewares
 app.use(helmet());
 app.use(morgan('dev'));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Injecting routes
