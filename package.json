@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "nodemon app.ts",
+    "start": "node app.ts",
     "build": "tsc --project ./"
   },
   "dependencies": {
