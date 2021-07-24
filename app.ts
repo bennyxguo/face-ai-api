@@ -10,7 +10,7 @@ import userRouters from './routers/users';
 import imageRouters from './routers/image';
 
 const app = express();
-const port = 3030;
+const port = process.env.PORT || 3030;
 
 // Middlewares
 app.use(helmet());
