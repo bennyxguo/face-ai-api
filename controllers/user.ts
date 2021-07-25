@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import LoginModel from '../models/login';
 import UserModel from '../models/user';
 import db from '../database';
+import md5 from 'md5';
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -19,6 +20,10 @@ export const login = async (req: Request, res: Response) => {
 
   if (isValidPassword) {
     const user = await UserModel.findByPk(login.uid);
+    user.setDataValue(
+      'avatar',
+      `https://gravatar.com/avatar/?${md5(user.email)}s=40&d=robohash&r=x`
+    );
     return res.json(user);
   }
 
@@ -55,6 +60,11 @@ export const register = async (req: Request, res: Response) => {
     );
 
     await trx.commit();
+
+    user.setDataValue(
+      'avatar',
+      `https://gravatar.com/avatar/?${md5(user.email)}s=400&d=robohash&r=x`
+    );
     return res.json(user);
   } catch (error) {
     await trx.rollback();
