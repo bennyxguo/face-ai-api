@@ -13,9 +13,7 @@ services:
       MYSQL_DATABASE: 'face_ai_docker'
       MYSQL_USER: 'face_ai'
       MYSQL_PASSWORD: 'face_ai_pw'
-      MYSQL_HOST: 'mysql'
-    links:
-      - mysql
+      MYSQL_HOST: mysql
     ports:
       - '3030:3030'
     volumes:
