@@ -1,34 +1,42 @@
 version: '3.9'
 
 services:
+  # MySQL
+  mysql:
+    image: mysql
+    restart: always
+    env_file: ./.env
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 'docker_root_pw'
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    volumes: # Keep our data alive when restart.
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+      - ./db/backup/files/:/data_backup/data
+    cap_add:
+      - SYS_NICE # CAP_SYS_NICE
+
   # backend API
   face-ai-api:
     container_name: backend
-    #image: node: 16.4.0
     build: . # Build from the local Dockerfile
+    depends_on:
+      - mysql
+    stdin_open: true
+    tty: true
     command: yarn serve
     working_dir: /usr/src/face-ai-api
-    environment:
-      MYSQL_ROOT_PASSWORD: 'docker_mysql_pw'
-      MYSQL_DATABASE: 'face_ai_docker'
-      MYSQL_USER: 'face_ai'
-      MYSQL_PASSWORD: 'face_ai_pw'
-      MYSQL_HOST: mysql
     ports:
       - '3030:3030'
     volumes:
       - ./:/usr/src/face-ai-api
       - /usr/src/face-ai-api/node_modules
 
-  # MySQL
-  mysql:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 'docker_mysql_pw'
-      MYSQL_DATABASE: 'face_ai_docker'
-      MYSQL_USER: 'face_ai'
-      MYSQL_PASSWORD: 'face_ai_pw'
-    ports:
-      - '3306:3306'
+volumes:
+  db-config:
+  db-data:

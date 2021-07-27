@@ -9,5 +9,7 @@ router.get('/', async (req, res) => {
 
 router.post('/login', catchAsync(userController.login));
 router.post('/register', catchAsync(userController.register));
+router.get('/user/:id', catchAsync(userController.show));
+router.put('/user/:id', catchAsync(userController.update));
 
 export default router;

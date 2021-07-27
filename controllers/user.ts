@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import LoginModel from '../models/login';
 import UserModel from '../models/user';
 import db from '../database';
-import md5 from 'md5';
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -20,10 +19,6 @@ export const login = async (req: Request, res: Response) => {
 
   if (isValidPassword) {
     const user = await UserModel.findByPk(login.uid);
-    user.setDataValue(
-      'avatar',
-      `https://gravatar.com/avatar/?${md5(user.email)}s=40&d=robohash&r=x`
-    );
     return res.json(user);
   }
 
@@ -61,10 +56,6 @@ export const register = async (req: Request, res: Response) => {
 
     await trx.commit();
 
-    user.setDataValue(
-      'avatar',
-      `https://gravatar.com/avatar/?${md5(user.email)}s=400&d=robohash&r=x`
-    );
     return res.json(user);
   } catch (error) {
     await trx.rollback();
@@ -72,7 +63,39 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+const show = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json('Incorrect credentials.');
+
+  const user = await UserModel.findByPk(id);
+  if (!user) return res.status(400).json('User not found.');
+
+  return res.json(user);
+};
+
+const update = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, age, hobby } = req.body;
+
+  // Check credentials
+  if (!id || (!name && !age && !hobby)) {
+    return res.status(400).json('Incorrect credentials.');
+  }
+
+  const user = await UserModel.findByPk(id);
+  if (!user) return res.status(400).json('User not found.');
+
+  try {
+    await user.update({ ...req.body });
+    return res.json('Updated completed.');
+  } catch (error) {
+    return res.status(400).json('Unable to update user.');
+  }
+};
+
 export default {
   login,
-  register
+  register,
+  show,
+  update
 };

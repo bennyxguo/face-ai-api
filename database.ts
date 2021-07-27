@@ -1,12 +1,12 @@
 import { Sequelize } from 'sequelize';
 
-const database: string = String(process.env.DB_NAME);
-const username: string = String(process.env.DB_USERNAME);
-const password: string = String(process.env.DB_PASSWORD);
+const database: string = String(process.env.MYSQL_DATABASE);
+const username: string = String(process.env.MYSQL_USER);
+const password: string = String(process.env.MYSQL_PASSWORD);
 
-export const db = new Sequelize(database, username, password, {
-  host: String(process.env.DB_HOST) || '127.0.0.1',
-  port: Number(process.env.DB_PORT) || 8889,
+const db = new Sequelize(database, username, password, {
+  host: String(process.env.MYSQL_HOST) || '127.0.0.1',
+  port: Number(process.env.MYSQL_LOCAL_PORT) || 3306,
   dialect: 'mysql'
 });
 
