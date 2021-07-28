@@ -6,8 +6,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 
-import userRouters from './routers/users';
-import imageRouters from './routers/image';
+import userRouters from './components/user/userRoutes';
+import imageRouters from './components/image/imageRoutes';
 
 const app = express();
 const port = process.env.PORT || 3030;

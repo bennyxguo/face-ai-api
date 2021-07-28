@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import catchAsync from '../utils/catchAsync';
-import userController from '../controllers/user';
+import catchAsync from '../../utils/catchAsync';
+import userController from './userController';
 
 router.get('/', async (req, res) => {
   res.send('Welcome to Face AI API...');

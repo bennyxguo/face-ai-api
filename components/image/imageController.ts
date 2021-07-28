@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import UserModel from '../models/user';
-import ClarifaiApi from '../utils/clarifaiApi';
+import UserModel from '../user/userModel';
+import ClarifaiApi from '../../utils/clarifaiApi';
 
 const updateEntry = async (req: Request, res: Response) => {
   const { id } = req.body;
