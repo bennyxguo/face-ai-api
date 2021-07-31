@@ -1,31 +1,47 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import LoginModel from './loginModel';
-import UserModel from './userModel';
 import db from '../../database';
+import UserModel from './userModel';
+import LoginModel from './loginModel';
+import { createAuthToken } from './authToken';
+import { AuthRequest } from './authTypes';
 
-export const login = async (req: Request, res: Response) => {
+const authentication = async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  try {
+    const user = await verifyUser(email, password);
+    if (user instanceof UserModel) {
+      const authToken = await createAuthToken(user);
+      return res.json(authToken);
+    } else {
+      throw new Error('User not found.');
+    }
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+const verifyUser = async (email: string, password: string): Promise<UserModel | string> => {
   // Check credentials
   if (!email || !password) {
-    return res.status(400).json('Incorrect form submittion.');
+    return Promise.reject('Incorrect form submittion.');
   }
 
   const login = await LoginModel.findOne({ where: { email } });
 
-  if (!login) res.status(400).json('Wrong credentials');
+  if (!login) return Promise.reject('Wrong credentials');
   // Check password
   const isValidPassword = await bcrypt.compare(password, login.hash);
 
   if (isValidPassword) {
     const user = await UserModel.findByPk(login.uid);
-    return res.json(user);
+    return Promise.resolve(user);
   }
 
-  return res.status(400).json('Wrong credentials');
+  return Promise.reject('Wrong credentials');
 };
 
-export const register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   if (!email || !password || !name) {
     return res.status(400).json('Incorrect form submittion.');
@@ -63,26 +79,26 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-const show = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (!id) return res.status(400).json('Incorrect credentials.');
+const show = async (req: AuthRequest, res: Response) => {
+  const { userId } = req;
+  if (!userId) return res.status(400).json('Incorrect credentials.');
 
-  const user = await UserModel.findByPk(id);
+  const user = await UserModel.findByPk(userId);
   if (!user) return res.status(400).json('User not found.');
 
   return res.json(user);
 };
 
-const update = async (req: Request, res: Response) => {
-  const { id } = req.params;
+const update = async (req: AuthRequest, res: Response) => {
+  const { userId } = req;
   const { name, age, hobby } = req.body;
 
   // Check credentials
-  if (!id || (!name && !age && !hobby)) {
+  if (!userId || (!name && !age && !hobby)) {
     return res.status(400).json('Incorrect credentials.');
   }
 
-  const user = await UserModel.findByPk(id);
+  const user = await UserModel.findByPk(userId);
   if (!user) return res.status(400).json('User not found.');
 
   try {
@@ -94,7 +110,7 @@ const update = async (req: Request, res: Response) => {
 };
 
 export default {
-  login,
+  authentication,
   register,
   show,
   update
